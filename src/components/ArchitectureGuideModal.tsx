@@ -357,6 +357,19 @@ MONGODB_URI="mongodb+srv://<username>:<password>@cluster0.mongodb.net/portfolio?
               </div>
 
               <div className="p-5 rounded-xl border border-white/10 bg-white/5 space-y-2">
+                <div className="font-bold text-xs text-emerald-400">Deploying to GitHub Pages (Static Hosting)</div>
+                <p className="text-xs text-gray-300 font-sans">
+                  The <code className="text-emerald-400 font-mono">vite.config.ts</code> is already configured with <code className="text-emerald-400 font-mono">base: &apos;./&apos;</code> so asset paths resolve relatively on GitHub Pages subpaths.
+                </p>
+                <ol className="list-decimal list-inside text-xs text-gray-300 space-y-1 font-sans">
+                  <li>Run <code className="px-1 py-0.5 rounded bg-black/60 text-emerald-400 font-mono">npm run build</code> (outputs to <code className="font-mono">dist/</code>).</li>
+                  <li>In your GitHub Repository, go to <strong>Settings &gt; Pages</strong>.</li>
+                  <li>Under <strong>Build and deployment &gt; Source</strong>, choose <strong>GitHub Actions</strong> or select <strong>Deploy from a branch</strong> (<code className="font-mono">gh-pages</code> / <code className="font-mono">dist</code>).</li>
+                  <li>Alternatively, deploy directly via <code className="px-1 py-0.5 rounded bg-black/60 text-emerald-400 font-mono">npx gh-pages -d dist</code>.</li>
+                </ol>
+              </div>
+
+              <div className="p-5 rounded-xl border border-white/10 bg-white/5 space-y-2">
                 <div className="font-bold text-xs text-emerald-400">Deploying to Render / Cloud Run (Full-Stack Node + React)</div>
                 <ol className="list-decimal list-inside text-xs text-gray-300 space-y-1 font-sans">
                   <li>Create a new Web Service on Render linked to your repository.</li>

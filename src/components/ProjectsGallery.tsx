@@ -7,6 +7,7 @@ import {
   FolderGit2
 } from 'lucide-react';
 import { Project, ServerHealth } from '../types';
+import { fallbackProjects } from '../data/portfolioData';
 import { ProjectCard } from './ProjectCard';
 import { ProjectModal } from './ProjectModal';
 import { NewProjectModal } from './NewProjectModal';
@@ -22,7 +23,7 @@ export const ProjectsGallery: React.FC<ProjectsGalleryProps> = ({
   isDark,
   onShowToast,
 }) => {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(fallbackProjects);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,13 +37,29 @@ export const ProjectsGallery: React.FC<ProjectsGalleryProps> = ({
     setLoading(true);
     try {
       const res = await fetch('/api/projects');
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
       const data = await res.json();
       if (data.success && Array.isArray(data.data)) {
         setProjects(data.data);
+      } else {
+        setProjects(fallbackProjects);
       }
     } catch (err) {
-      console.error('Error fetching projects:', err);
-      onShowToast('Could not fetch projects from REST API', 'error');
+      // Graceful fallback for static hosting (GitHub Pages / Vercel static)
+      console.warn('API fetch unavailable; using embedded portfolio catalog:', err);
+      try {
+        const stored = localStorage.getItem('portfolio_projects_custom');
+        if (stored) {
+          const custom = JSON.parse(stored);
+          if (Array.isArray(custom) && custom.length > 0) {
+            setProjects([...custom, ...fallbackProjects]);
+            return;
+          }
+        }
+      } catch {}
+      setProjects(fallbackProjects);
     } finally {
       setLoading(false);
     }
