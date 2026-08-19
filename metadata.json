@@ -2,5 +2,7 @@
   "name": "Developer Portfolio & API Engine",
   "description": "Modern responsive personal portfolio with Express REST API, project showcase, contact handler, and architecture guide.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

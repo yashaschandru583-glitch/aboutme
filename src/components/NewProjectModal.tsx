@@ -59,7 +59,9 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({
     setLoading(true);
 
     try {
-      const payload = {
+      const payload: Project = {
+        id: `proj_custom_${Date.now()}`,
+        _id: `proj_custom_${Date.now()}`,
         title: formData.title,
         description: formData.description,
         longDescription: formData.longDescription,
@@ -71,24 +73,38 @@ export const NewProjectModal: React.FC<NewProjectModalProps> = ({
         featured: formData.featured,
         stars: Number(formData.stars) || 0,
         highlights: formData.highlights.split('\n').map(s => s.trim()).filter(Boolean),
+        createdAt: new Date().toISOString(),
       };
 
-      const res = await fetch('/api/projects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+      try {
+        const res = await fetch('/api/projects', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
 
-      const data = await res.json();
-
-      if (data.success && data.data) {
-        onProjectCreated(data.data);
-        onClose();
-      } else {
-        setError(data.error || 'Failed to create project via REST API');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data) {
+            onProjectCreated(data.data);
+            onClose();
+            return;
+          }
+        }
+      } catch {
+        // Continue to static/local persistence
       }
+
+      // Local storage fallback for GitHub Pages / static hosting
+      try {
+        const existing = JSON.parse(localStorage.getItem('portfolio_projects_custom') || '[]');
+        localStorage.setItem('portfolio_projects_custom', JSON.stringify([payload, ...existing]));
+      } catch {}
+
+      onProjectCreated(payload);
+      onClose();
     } catch (err: any) {
-      setError(err.message || 'Server error creating project');
+      setError(err.message || 'Error creating project');
     } finally {
       setLoading(false);
     }
